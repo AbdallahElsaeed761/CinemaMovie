@@ -52,6 +52,7 @@ namespace CinemaMovie
             })
                     .AddEntityFrameworkStores<ApplicationDbContext>().
                     AddDefaultTokenProviders();
+            services.AddCors();
 
             services.AddSwaggerGen(c =>
             {
@@ -72,7 +73,7 @@ namespace CinemaMovie
             app.UseHttpsRedirection();
 
             app.UseRouting();
-
+            app.UseCors(x=>x.WithOrigins("http://localhost:4200/").AllowAnyHeader().AllowAnyMethod());
             app.UseAuthorization();
             app.UseAuthentication();
 

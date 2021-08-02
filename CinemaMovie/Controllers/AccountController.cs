@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
@@ -66,7 +67,8 @@ namespace CinemaMovie.Controllers
                     var title = "RegisterConfirmation";
                     if (await SendGridApi.Execute(user.Email,user.UserName,txt,link,title))
                     {
-                        return Ok("Registertion Complete");
+                        // return Ok("Registertion Complete");
+                        return Ok();
                     }
                     
                 }
@@ -145,7 +147,30 @@ namespace CinemaMovie.Controllers
             return NoContent();
 
         }
-
+        [HttpGet]
+        [Route("GetAllUsers")]
+        public async Task<ActionResult<IEnumerable<ApplicationUser>>> GetAllUsers()
+        {
+            return await _db.Users.ToListAsync();
+        }
+        private async Task CreateAdmin()
+        {
+            var admin = await _manager.FindByNameAsync("Admin");
+            if (admin==null)
+            {
+                var user = new ApplicationUser()
+                {
+                    Email= "abdullahalsaeed36@gmail.com",
+                    UserName="Admin",
+                    EmailConfirmed=true
+                };
+             var res=   await _manager.CreateAsync(user, "123*aA");
+                if (res.Succeeded)
+                {
+                    await _manager.AddToRoleAsync(user, "Admin");
+                }
+            }
+        }
 
     }
 }
